@@ -11,7 +11,7 @@ use Moo;
 use namespace::clean;
 
 # Version.
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 # Get XML.
 has xml => (
@@ -38,9 +38,11 @@ Map::Tube::Kazan - Interface to the Kazan Metro Map.
  use Map::Tube::Kazan;
  my $obj = Map::Tube::Kazan->new;
  my $routes_ar = $obj->get_all_routes($from, $to);
+ my $lines_ar = $obj->get_lines;
  my $station = $obj->get_node_by_id($station_id);
  my $station = $obj->get_node_by_name($station_name);
  my $route = $obj->get_shortest_route($from, $to);
+ my $stations_ar = $obj->get_stations($line);
  my $metro_name = $obj->name;
  my $xml_file = $obj->xml;
 
@@ -64,6 +66,11 @@ For more information about Kazan Map, click L<here|https://en.wikipedia.org/wiki
  Get all routes from station to station.
  Returns reference to array with Map::Tube::Route objects.
 
+=item C<get_lines()>
+
+ Get lines in metro map.
+ Returns reference to array with Map::Tube::Line objects.
+
 =item C<get_node_by_id($station_id)>
 
  Get station node by id.
@@ -78,6 +85,11 @@ For more information about Kazan Map, click L<here|https://en.wikipedia.org/wiki
 
  Get shortest route between $from and $to node names. Node names in $from and $to are case insensitive.
  Returns Map::Tube::Route object.
+
+=item C<get_stations($line)>
+
+ Get list of stations for concrete metro line.
+ Returns reference to array with Map::Tube::Node objects.
 
 =item C<name()>
 
@@ -117,7 +129,6 @@ For more information about Kazan Map, click L<here|https://en.wikipedia.org/wiki
 
  # Pragmas.
  use strict;
- use utf8;
  use warnings;
 
  # Modules.
@@ -135,6 +146,44 @@ For more information about Kazan Map, click L<here|https://en.wikipedia.org/wiki
  # Output like:
  # XML file: .*/kazan-map.xml
 
+=head1 EXAMPLE3
+
+ # Pragmas.
+ use strict;
+ use warnings;
+
+ # Modules.
+ use Map::Tube::GraphViz;
+ use Map::Tube::GraphViz::Utils qw(node_color_without_label);
+ use Map::Tube::Kazan;
+
+ # Object.
+ my $obj = Map::Tube::Kazan->new;
+
+ # GraphViz object.
+ my $g = Map::Tube::GraphViz->new(
+         'callback_node' => \&node_color_without_label,
+         'driver' => 'neato',
+         'tube' => $obj,
+ ); 
+
+ # Get graph to file.
+ $g->graph('Kazan.png');
+
+ # Print file.
+ system "ls -l Kazan.png";
+
+ # Output like:
+ # -rw-r--r-- 1 skim skim 27046 Dec 25 18:23 Kazan.png
+
+=begin html
+
+<a href="https://raw.githubusercontent.com/tupinek/Map-Tube-Kazan/master/images/Kazan.png">
+  <img src="https://raw.githubusercontent.com/tupinek/Map-Tube-Kazan/master/images/Kazan.png" alt="Казанский метрополитен" width="300px" height="300px" />
+</a>
+
+=end html
+
 =head1 DEPENDENCIES
 
 L<File::Share>,
@@ -145,19 +194,30 @@ L<namespace::clean>.
 =head1 SEE ALSO
 
 L<Map::Tube>,
+L<Map::Tube::GraphViz>,
+L<Map::Tube::Text::Table>.
+
 L<Map::Tube::Barcelona>,
 L<Map::Tube::Berlin>,
+L<Map::Tube::Bucharest>,
 L<Map::Tube::Delhi>,
+L<Map::Tube::Dnipropetrovsk>,
 L<Map::Tube::Kharkiv>,
 L<Map::Tube::Kiev>,
 L<Map::Tube::London>,
 L<Map::Tube::Minsk>,
 L<Map::Tube::Moscow>,
+L<Map::Tube::Novosibirsk>,
 L<Map::Tube::NYC>,
+L<Map::Tube::Prague>,
+L<Map::Tube::SaintPetersburg>,
 L<Map::Tube::Samara>,
 L<Map::Tube::Sofia>,
+L<Map::Tube::Tbilisi>,
 L<Map::Tube::Tokyo>,
-L<Map::Tube::Warsaw>.
+L<Map::Tube::Vienna>,
+L<Map::Tube::Warsaw>,
+L<Map::Tube::Yekaterinburg>.
 
 =head1 REPOSITORY
 
@@ -177,6 +237,6 @@ L<http://skim.cz>
 
 =head1 VERSION
 
-0.01
+0.02
 
 =cut
